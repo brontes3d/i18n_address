@@ -1,0 +1,15 @@
+en:
+  i18n_address:
+    recipient_name: Name
+    phone: Phone
+    email: Email
+    address: Address
+    address_1: Address Line 1
+    city: City
+    post_town: Post Town
+    state: State
+    province: Province
+    county: County
+    zip_code: Zip Code
+    postal_code: Postal Code
+    country: Country

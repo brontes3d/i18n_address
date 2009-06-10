@@ -1,0 +1,9 @@
+= I18nAddress - Opinionated help for formatting addresses in country-specific formats
+
+= Quick Start:
+	first Look at countries.yml then read the tests
+
+
+Copyright (c) 2009 Brontes Technologies Inc., a 3M company, released under the MIT license.
+
+Authored by Jacob Burkhart.

@@ -1,0 +1,15 @@
+pirate:
+  i18n_address:
+    recipient_name: Name and Rank
+    phone: Telegraph Number
+    email: Carrier Pigeon's Name
+    address: Hiding Place
+    address_1: first part of Hiding Place
+    city: Island
+    post_town: Bay
+    state: Sea
+    province: Reef
+    county: Shore
+    zip_code: Lucky Number
+    postal_code: Coordinates
+    country: Ocean
