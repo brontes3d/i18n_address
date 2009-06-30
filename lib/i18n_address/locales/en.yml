@@ -12,4 +12,5 @@ en:
     county: County
     zip_code: Zip Code
     postal_code: Postal Code
+    district: District
     country: Country

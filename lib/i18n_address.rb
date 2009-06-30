@@ -23,7 +23,7 @@ module I18nAddress
       "city" => ["city", "post_town"],
       "state" => ["state"],
       "province" => ["province", "county"],
-      "zip" => ["zip_code", "postal_code"]      
+      "zip" => ["zip_code", "postal_code", "district"]      
     }
   end
   
@@ -91,8 +91,8 @@ module I18nAddress
       while to_return.index("\n\n")
         to_return.gsub!("\n\n", "\n")
       end
-      
-      to_return
+
+      to_return.split("\n").map(&:strip).join("\n")
     end
     def address_label
       to_return = @format.dup
@@ -104,6 +104,7 @@ module I18nAddress
       to_return.gsub!("county", I18n.t("i18n_address.county"))
       to_return.gsub!("zip_code", I18n.t("i18n_address.zip_code"))
       to_return.gsub!("postal_code", I18n.t("i18n_address.postal_code"))
+      to_return.gsub!("district", I18n.t("i18n_address.district"))
       to_return.gsub!("country", I18n.t("i18n_address.country"))      
       to_return
     end
@@ -176,6 +177,10 @@ module I18nAddress
               define_method("#{named.to_s}_#{e}") do
                 self.send("#{named.to_s}_#{db_name}")
               end
+
+              define_method("#{named.to_s}_#{e}=") do |*args|
+                self.send("#{named.to_s}_#{db_name}=", "#{args}")
+              end
             end
           end
         end
@@ -192,6 +197,7 @@ module I18nAddress
         "county" => ["province", :conditionally_expected],
         "zip_code" => ["zip", :conditionally_expected],        
         "postal_code" => ["zip", :conditionally_expected],        
+        "district" => ["zip", :conditionally_expected],
         "country" => ["country", :expected],
       }
       col_name_to_translateable_part = {"#{named.to_s}_address" => "address", 

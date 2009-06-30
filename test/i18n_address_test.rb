@@ -111,9 +111,42 @@ class I18nAddressTest < Test::Unit::TestCase
     assert empty_house.errors.on(:home_province)
     assert !empty_house.errors.on(:home_zip_code)    
     assert empty_house.errors.on(:home_postal_code)
+
+    empty_house.home_address.country = "Ireland"
+    
+    assert_raises(ActiveRecord::RecordInvalid){
+      empty_house.save!
+    }
+    
+    assert !empty_house.errors.on(:home_country)
+    assert empty_house.errors.on(:home_address_1)
+    assert !empty_house.errors.on(:home_address_2)
+    assert !empty_house.errors.on(:home_address_3)
+    assert empty_house.errors.on(:home_post_town)
+    assert !empty_house.errors.on(:home_district)
+    assert !empty_house.errors.on(:home_county)
   end
   
   def test_address_to_s    
+    irish_house = House.new("home_address_1" => "Reed",
+                            "home_address_2" => "123 Rock Road",
+                            "home_address_3" => "Blackrock",
+                            "home_post_town" => "Cork",
+                            "home_county"    => "Munster",
+                            "home_country"   => "Ireland")
+
+    expected = "Reed\n123 Rock Road\nBlackrock\nCork\nMunster\nIreland"
+    assert_equal(expected, irish_house.home_address.to_s)
+
+    irish_house_in_dublin = House.new("home_address_1" => "Reed",
+                            "home_address_2" => "123 Rock Road",
+                            "home_post_town" => "Dublin",
+                            "home_district"  => "12",
+                            "home_country"   => "Ireland")
+
+    expected = "Reed\n123 Rock Road\nDublin 12\nIreland"
+    assert_equal(expected, irish_house_in_dublin.home_address.to_s)
+
     us_house = House.new("home_address_1" => "Bob",
                   "home_address_2" => "123 Bob way",
                   "home_address_3" => "",
@@ -178,6 +211,8 @@ class I18nAddressTest < Test::Unit::TestCase
                 I18nAddress.supported_countries["Italy"].address_label)
     assert_equal("Address\nPost Town\nCounty\nPostal Code\nCountry",
                 I18nAddress.supported_countries["United Kingdom"].address_label)
+    assert_equal("Address\nPost Town District\nCounty\nCountry",
+                I18nAddress.supported_countries["Ireland"].address_label)
     
     I18n.locale = "pirate"
 
@@ -189,6 +224,8 @@ class I18nAddressTest < Test::Unit::TestCase
                 I18nAddress.supported_countries["Italy"].address_label)
     assert_equal("Hiding Place\nBay\nShore\nCoordinates\nOcean",
                 I18nAddress.supported_countries["United Kingdom"].address_label)
+    assert_equal("Hiding Place\nBay Inlet\nShore\nOcean",
+                I18nAddress.supported_countries["Ireland"].address_label)
   end
   
 end
