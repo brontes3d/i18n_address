@@ -3,6 +3,7 @@
 = Quick Start:
 	first Look at countries.yml then read the tests
 
+= Address format information source: http://www.upu.int/post_code/en/postal_addressing_systems_member_countries.shtml
 
 Copyright (c) 2009 Brontes Technologies Inc., a 3M company, released under the MIT license.
 
