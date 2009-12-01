@@ -127,7 +127,11 @@ class I18nAddressTest < Test::Unit::TestCase
     assert !empty_house.errors.on(:home_county)
   end
   
-  def test_address_to_s    
+  def test_address_to_s_and_to_html
+    span_wrapper = Proc.new do |field_name, value|
+      "<span id='#{field_name}'>#{value}</span>"
+    end
+    
     irish_house = House.new("home_address_1" => "Reed",
                             "home_address_2" => "123 Rock Road",
                             "home_address_3" => "Blackrock",
@@ -137,7 +141,17 @@ class I18nAddressTest < Test::Unit::TestCase
 
     expected = "Reed\n123 Rock Road\nBlackrock\nCork\nMunster\nIreland"
     assert_equal(expected, irish_house.home_address.to_s)
-
+    assert_equal(expected.gsub("\n","<br/>"), irish_house.home_address.to_html)
+    
+    assert_equal(%Q{
+<span id='address_1'>Reed</span>
+<span id='address_2'>123 Rock Road</span>
+<span id='address_3'>Blackrock</span>
+<span id='city'>Cork</span> <span id='zip'></span>
+<span id='province'>Munster</span>
+<span id='country'>Ireland</span>
+    }.strip, irish_house.home_address.to_html(span_wrapper).gsub("<br/>","\n"))
+    
     irish_house_in_dublin = House.new("home_address_1" => "Reed",
                             "home_address_2" => "123 Rock Road",
                             "home_post_town" => "Dublin",
@@ -146,6 +160,7 @@ class I18nAddressTest < Test::Unit::TestCase
 
     expected = "Reed\n123 Rock Road\nDublin 12\nIreland"
     assert_equal(expected, irish_house_in_dublin.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), irish_house_in_dublin.home_address.to_html)
 
     us_house = House.new("home_address_1" => "Bob",
                   "home_address_2" => "123 Bob way",
@@ -159,6 +174,7 @@ class I18nAddressTest < Test::Unit::TestCase
     
     # puts us_house.home_address.to_s
     assert_equal(expected, us_house.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), us_house.home_address.to_html)
 
     italian_house = House.new("home_address_1" => "Francesco",
                   "home_address_2" => "123 villa del villa",
@@ -172,6 +188,7 @@ class I18nAddressTest < Test::Unit::TestCase
 
     # puts italian_house.home_address.to_s
     assert_equal(expected, italian_house.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), italian_house.home_address.to_html)
     
     uk_house = House.new("home_address_1" => "Sir Giles",
                   "home_address_2" => "Appleford",
@@ -185,6 +202,7 @@ class I18nAddressTest < Test::Unit::TestCase
 
     # puts uk_house.home_address.to_s
     assert_equal(expected, uk_house.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), uk_house.home_address.to_html)
 
     uk_house_sans_county = House.new("home_address_1" => "Victoria House",
                   "home_address_2" => "15 The Street",
@@ -198,6 +216,22 @@ class I18nAddressTest < Test::Unit::TestCase
 
     # puts uk_house_sans_county.home_address.to_s
     assert_equal(expected, uk_house_sans_county.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), uk_house_sans_county.home_address.to_html)
+    
+    empty_address = House.new("home_address_1" => "",
+                  "home_address_2" => "",
+                  "home_address_3" => "",
+                  "home_city" => "",     
+                  "home_state" => "",    
+                  "home_zip" => "",      
+                  "home_country" => "")
+    assert_equal("\n", empty_address.home_address.to_s)
+    assert_equal("<br/>", empty_address.home_address.to_html)
+    assert_equal("<span id='address_1'></span><br/><span id='address_2'></span><br/>"+
+                 "<span id='address_3'></span><br/>"+
+                 "<span id='city'></span> <span id='state'></span> <span id='zip'></span><br/>"+
+                 "<span id='country'></span>", 
+                 empty_address.home_address.to_html(span_wrapper))
   end
   
   #TODO: should get validation errors on missing fields if address is required

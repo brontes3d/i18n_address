@@ -71,28 +71,30 @@ module I18nAddress
         prev_part
       end
     end
-    def format_address(address)
+    def format_address(address, breaking_char = "\n", wrapper = Address.default_wrapper)
       to_return = @format.dup
       
-      address_lines = [address.address_1, address.address_2, address.address_3]
+      address_lines = [wrapper.call('address_1', address.address_1), 
+                       wrapper.call('address_2', address.address_2), 
+                       wrapper.call('address_3', address.address_3)]
       address_lines = address_lines.reject(&:blank?).join("\n")
       to_return.gsub!("address", address_lines)
       
       I18nAddress.db_name_to_format_key_equivalencies.each do |db_name, format_keys|
         value = address.get(db_name)
         format_keys.each do |format_key|
-          to_return.gsub!(format_key, value)
+          to_return.gsub!(format_key, wrapper.call(db_name, value))
         end
       end
       
       country = address.country
-      to_return.gsub!("country", country)
+      to_return.gsub!("country", wrapper.call("country", country))
       
       while to_return.index("\n\n")
         to_return.gsub!("\n\n", "\n")
       end
 
-      to_return.split("\n").map(&:strip).join("\n")
+      to_return.split("\n").map(&:strip).join(breaking_char)
     end
     def address_label
       to_return = @format.dup
@@ -111,13 +113,22 @@ module I18nAddress
   end
   
   class Address
+    def self.default_wrapper
+      @@default_wrapper ||= Proc.new{|n,v| v}
+    end
     def initialize(named, for_model)
       @named = named
       @model = for_model
     end
+    def country_formatter=(arg)
+      @country_formatter = arg
+    end
     def country_formatter(options = {})
+      return @country_formatter if @country_formatter      
       if I18nAddress.supported_countries.include?(self.country)
         I18nAddress.supported_countries[self.country]
+      elsif self.country.to_s == ""
+        I18nAddress.supported_countries["United States"]        
       else
         if options[:raise] == false
           return false
@@ -127,10 +138,10 @@ module I18nAddress
       end
     end
     def to_s
-      self.country_formatter.format_address(self)
+      self.country_formatter.format_address(self, "\n")
     end
-    def to_html
-      self.to_s.gsub("\n","<br/>")
+    def to_html(wrapper = Address.default_wrapper)
+      self.country_formatter.format_address(self, "<br/>", wrapper)
     end
     def get(attribute_name)
       @model.send("#{@named}_#{attribute_name.to_s}").to_s
@@ -209,15 +220,16 @@ module I18nAddress
       validates_inclusion_of "#{named.to_s}_country", :in => I18nAddress.supported_countries, :allow_nil => true
       
       if options[:required]
+        ifproc = options[:required].respond_to?(:call) ? options[:required] : lambda{|celf| true }
         self.class_eval do
           column_expectations.each do |addr_part, name_and_expectation|
             name, expectation = name_and_expectation
             col = "#{named.to_s}_#{addr_part}"
             if expectation == :expected
-              validates_presence_of col
+              validates_presence_of col, :if => ifproc
             elsif expectation == :conditionally_expected
               validates_presence_of col, :if => (Proc.new do |celf|
-                celf.send("#{named.to_s}_address").required?(addr_part)
+                ifproc.call(celf) && celf.send("#{named.to_s}_address").required?(addr_part)
               end)
             end
           end
