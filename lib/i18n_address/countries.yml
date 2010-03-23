@@ -301,3 +301,14 @@ countries:
       country
     optional:
       - province
+  Finland:
+    format: &id003 |-
+      address
+      postal_code post_town
+      country
+  Iceland:
+    format: *id003
+  Norway:
+    format: *id003
+  Sweden:
+    format: *id003
