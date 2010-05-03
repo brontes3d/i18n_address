@@ -312,3 +312,11 @@ countries:
     format: *id003
   Sweden:
     format: *id003
+  Poland:
+    format: |-
+      address
+      city
+      postal_code post_town
+      country
+    optional:
+      - city
