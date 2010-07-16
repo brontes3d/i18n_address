@@ -176,12 +176,26 @@ class I18nAddressTest < Test::Unit::TestCase
     assert_equal(expected, us_house.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), us_house.home_address.to_html)
 
+    canadian_house = House.new("home_address_1" => "Robert Chevalier",
+                  "home_address_2" => "321 Queen Elizabeth Driveway",
+                  "home_address_3" => "",
+                  "home_city" => "Ottawa",
+                  "home_province" => "ON",
+                  "home_postal_code" => "K1A 0A9",
+                  "home_country" => "Canada")
+
+    expected = "Robert Chevalier\n321 Queen Elizabeth Driveway\nOttawa ON K1A 0A9\nCanada"
+
+    # puts canadian_house.home_address.to_s
+    assert_equal(expected, canadian_house.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), canadian_house.home_address.to_html)
+
     italian_house = House.new("home_address_1" => "Francesco",
                   "home_address_2" => "123 villa del villa",
                   "home_address_3" => "",
+                  "home_postal_code" => "13421 abc",
                   "home_city" => "Venice",     
                   "home_province" => "NA",    
-                  "home_zip" => "13421 abc",      
                   "home_country" => "Italy")
 
     expected = "Francesco\n123 villa del villa\n13421 abc Venice NA\nItaly"
@@ -193,9 +207,9 @@ class I18nAddressTest < Test::Unit::TestCase
     uk_house = House.new("home_address_1" => "Sir Giles",
                   "home_address_2" => "Appleford",
                   "home_address_3" => "",
-                  "home_city" => "Abingdon",
-                  "home_province" => "Lieds",
-                  "home_zip" => "OX14 4PG",
+                  "home_post_town" => "Abingdon",
+                  "home_county" => "Lieds",
+                  "home_postal_code" => "OX14 4PG",
                   "home_country" => "United Kingdom")
 
     expected = "Sir Giles\nAppleford\nAbingdon\nLieds\nOX14 4PG\nUnited Kingdom"
@@ -207,9 +221,9 @@ class I18nAddressTest < Test::Unit::TestCase
     uk_house_sans_county = House.new("home_address_1" => "Victoria House",
                   "home_address_2" => "15 The Street",
                   "home_address_3" => "Hurn",
-                  "home_city" => "Christ Church",
+                  "home_post_town" => "Christ Church",
                   "home_province" => "",
-                  "home_zip" => "BH23 6AA",
+                  "home_postal_code" => "BH23 6AA",
                   "home_country" => "United Kingdom")
     
     expected = "Victoria House\n15 The Street\nHurn\nChrist Church\nBH23 6AA\nUnited Kingdom"
