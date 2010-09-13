@@ -320,3 +320,27 @@ countries:
       country
     optional:
       - city
+  Japan:
+    format: |-
+      address
+      post_town
+      postal_code country
+  Korea:
+    format: |-
+      address
+      post_town postal_code
+      country
+  Australia:
+    format: |-
+      address
+      post_town state postal_code
+      country
+    states:
+      - "ACT"
+      - "NSW"
+      - "NT"
+      - "QLD"
+      - "SA"
+      - "TAS"
+      - "VIC"
+      - "WA"

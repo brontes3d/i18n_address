@@ -152,6 +152,7 @@ class I18nAddressTest < Test::Unit::TestCase
 <span id='country'>Ireland</span>
     }.strip, irish_house.home_address.to_html(span_wrapper).gsub("<br/>","\n"))
 
+
     irish_house_in_dublin = House.new("home_address_1" => "Reed",
                             "home_address_2" => "123 Rock Road",
                             "home_post_town" => "Dublin",
@@ -161,6 +162,7 @@ class I18nAddressTest < Test::Unit::TestCase
     expected = "Reed\n123 Rock Road\nDublin 12\nIreland"
     assert_equal(expected, irish_house_in_dublin.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), irish_house_in_dublin.home_address.to_html)
+
 
     us_house = House.new("home_address_1" => "Bob",
                   "home_address_2" => "123 Bob way",
@@ -176,6 +178,7 @@ class I18nAddressTest < Test::Unit::TestCase
     assert_equal(expected, us_house.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), us_house.home_address.to_html)
 
+
     canadian_house = House.new("home_address_1" => "Robert Chevalier",
                   "home_address_2" => "321 Queen Elizabeth Driveway",
                   "home_address_3" => "",
@@ -189,6 +192,7 @@ class I18nAddressTest < Test::Unit::TestCase
     # puts canadian_house.home_address.to_s
     assert_equal(expected, canadian_house.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), canadian_house.home_address.to_html)
+
 
     italian_house = House.new("home_address_1" => "Francesco",
                   "home_address_2" => "123 villa del villa",
@@ -204,6 +208,35 @@ class I18nAddressTest < Test::Unit::TestCase
     assert_equal(expected, italian_house.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), italian_house.home_address.to_html)
 
+
+    korean_provincial_house = House.new("home_address_1" => "Mr. Park Kil-Dong",
+                  "home_address_2" => "Namwon-eup",
+                  "home_address_3" => "Namjeju-gun",
+                  "home_postal_code" => "699–800",
+                  "home_post_town" => "Jeju–do",
+                  "home_country" => "Korea")
+
+    expected = "Mr. Park Kil-Dong\nNamwon-eup\nNamjeju-gun\nJeju–do 699–800\nKorea"
+
+    # puts korean_provincial_house.home_address.to_s
+    assert_equal(expected, korean_provincial_house.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), korean_provincial_house.home_address.to_html)
+
+
+    australian_locked_bag = House.new("home_address_1" => "Broken Arrow Corporation",
+                  "home_address_2" => "Locked Bag 801",
+                  "home_post_town" => "Fortitude Valley",
+                  "home_state" => "QLD",
+                  "home_postal_code" => "4006",
+                  "home_country" => "Australia")
+
+    expected = "Broken Arrow Corporation\nLocked Bag 801\nFortitude Valley QLD 4006\nAustralia"
+
+    # puts australian_locked_bag.home_address.to_s
+    assert_equal(expected, australian_locked_bag.home_address.to_s)
+    assert_equal(expected.gsub("\n","<br/>"), australian_locked_bag.home_address.to_html)
+
+
     uk_house = House.new("home_address_1" => "Sir Giles",
                   "home_address_2" => "Appleford",
                   "home_address_3" => "",
@@ -218,6 +251,7 @@ class I18nAddressTest < Test::Unit::TestCase
     assert_equal(expected, uk_house.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), uk_house.home_address.to_html)
 
+
     uk_house_sans_county = House.new("home_address_1" => "Victoria House",
                   "home_address_2" => "15 The Street",
                   "home_address_3" => "Hurn",
@@ -231,6 +265,7 @@ class I18nAddressTest < Test::Unit::TestCase
     # puts uk_house_sans_county.home_address.to_s
     assert_equal(expected, uk_house_sans_county.home_address.to_s)
     assert_equal(expected.gsub("\n","<br/>"), uk_house_sans_county.home_address.to_html)
+
 
     empty_address = House.new("home_address_1" => "",
                   "home_address_2" => "",
