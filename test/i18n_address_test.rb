@@ -311,4 +311,15 @@ class I18nAddressTest < Test::Unit::TestCase
                 I18nAddress.supported_countries["Ireland"].address_label)
   end
 
+  def test_address_formats_contain_only_one_equivalent
+    I18nAddress.supported_countries.each do |country, formatter|
+      parts = formatter.format.split(/\s/).to_set
+      I18nAddress.db_name_to_format_key_equivalencies.each_value do |format_keys|
+        used_format_keys = (parts & format_keys)
+        assert([0, 1].include?(used_format_keys.size),
+          "format for #{country} must contain zero or one of #{format_keys.inspect}, contains #{used_format_keys.to_a.inspect}")
+      end
+    end
+  end
+
 end

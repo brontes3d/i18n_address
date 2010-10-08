@@ -313,13 +313,7 @@ countries:
   Sweden:
     format: *id003
   Poland:
-    format: |-
-      address
-      city
-      postal_code post_town
-      country
-    optional:
-      - city
+    format: *id003
   Japan:
     format: |-
       address
